@@ -1,42 +1,111 @@
-const router = require('express').Router()
+const express = require('express')
 const knex = require('knex')
+const project = require('./project-model.js')
 
-const db = require('../data/dbConfig')
+const router = express.Router()
 
-router.get('/', (req, res) => {
-	db('lambda')
-		.then((projects) => {
-			res.status(200).json(projects)
-		})
-		.catch((err) => {
-			res.status(500).json(err)
-		})
-})
-
-router.post('/', async (req, res) => {
+router.post('/resource', async (req, res) => {
+	const resourceData = req.body
 	try {
-		const project = await db('lambda').insert(req.body)
-		res.status(201).json(project)
-	} catch (error) {
-		res.status(500).json({ error: 'There was an error posting that!' })
+		const resource = await project.addResource(resourceData)
+		res.status(201).json(resource)
+	} catch (err) {
+		res.status(500).json({ message: 'Failed to create new resource.' })
 	}
 })
 
-router.get('/project/:id', (req, res) => {
-	const { id } = req.params
-	db('lambda')
-		.where({ id: id })
-		.first()
-		.then((projects) => {
-			db('actions')
-				.where({ project_id: id })
-				.then((actions) => {
-					projects.actions = actions
-					return res.status(200).json(projects)
-				})
-		})
-		.catch((err) => {
-			res.status(500).json({ Error: 'There was an error getting that' })
-		})
+router.get('/resource', async (req, res) => {
+	try {
+		const resources = await project.getResources()
+		if (resources) {
+			res.status(200).json(resources)
+		} else {
+			res.status(404).json({ message: 'Could not find resources.' })
+		}
+	} catch (err) {
+		res.status(500).json({ message: 'Failed to get resources.' })
+	}
 })
+
+router.post('/', async (req, res) => {
+	const projectData = req.body
+	try {
+		const projects = await project.addProject(projectData)
+		res.status(201).json(projects)
+	} catch (err) {
+		res.status(500).json({ message: 'Failed to add project.' })
+	}
+})
+
+router.get('/', async (req, res) => {
+	try {
+		const projects = await project.getProjects()
+		if (projects) {
+			for (let i = 0; i < projects.length; i++) {
+				projects[i].project_completed === 0
+					? (projects[i].project_completed = false)
+					: (projects[i].project_completed = true)
+			}
+			res.status(200).json(projects)
+		} else {
+			res.status(404).json({ message: 'Could not find projects.' })
+		}
+	} catch (err) {
+		res.status(500).json({ message: 'Failed to retrieve projects.' })
+	}
+})
+
+router.post('/tasks', async (req, res) => {
+	const taskData = req.body
+	try {
+		const task = await project.addTask(taskData)
+		res.status(201).json(task)
+	} catch (err) {
+		res.status(500).json({ message: 'Failed to add task.' })
+	}
+})
+
+router.get('/tasks', async (req, res) => {
+	try {
+		const tasks = await project.getTasks()
+		if (tasks) {
+			for (let i = 0; i < tasks.length; i++) {
+				tasks[i].task_completed === 0
+					? (tasks[i].task_completed = false)
+					: (tasks[i].task_completed = true)
+			}
+			res.status(200).json(tasks)
+		} else {
+			res.status(404).json({ message: 'Could not find tasks.' })
+		}
+	} catch (err) {
+		res.status(500).json({ message: 'Failed to retrieve tasks.' })
+	}
+})
+
+router.get('/full', async (req, res) => {
+	try {
+		const full = await project.getProjects()
+		if (full) {
+			for (let i = 0; i < full.length; i++) {
+				full[i].project_completed === 0
+					? (full[i].project_completed = false)
+					: (full[i].project_completed = true)
+				full[i].tasks = await project.getFullTasks(full[i].id)
+				for (let j = 0; j < full[i].tasks.length; j++) {
+					full[i].tasks[j].task_completed === 0
+						? (full[i].tasks[j].task_completed = false)
+						: (full[i].tasks[j].task_completed = true)
+				}
+				full[i].resources = await project.getFullResources(full[i].id)
+			}
+			res.status(200).json(full)
+		} else {
+			res.status(404).json({ message: 'Could not find projects.' })
+		}
+	} catch (err) {
+		res.status(500).json({ message: 'Failed to retrieve projects.' })
+	}
+})
+
 module.exports = router

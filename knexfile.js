@@ -3,21 +3,19 @@
 module.exports = {
 	development: {
 		client: 'sqlite3',
-		useNullAsDefault: true,
 		connection: {
-			filename: './data/projects.db3',
+			filename: './data/project.db3',
 		},
+		useNullAsDefault: true,
 		migrations: {
 			directory: './data/migrations',
 		},
 		seeds: {
 			directory: './data/seeds',
 		},
-		// needed when using foreign keys
 		pool: {
 			afterCreate: (conn, done) => {
-				// runs after a connection is made to the sqlite engine
-				conn.run('PRAGMA foreign_keys = ON', done) // turn on FK enforcement
+				conn.run('PRAGMA foreign_keys = ON', done) // turns on the FK enforcement
 			},
 		},
 	},
