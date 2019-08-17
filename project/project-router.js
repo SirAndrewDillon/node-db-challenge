@@ -10,7 +10,7 @@ router.post('/resource', async (req, res) => {
 		const resource = await project.addResource(resourceData)
 		res.status(201).json(resource)
 	} catch (err) {
-		res.status(500).json({ message: 'Failed to create new resource.' })
+		res.status(500).json({ message: 'Failed to create a new resource.' })
 	}
 })
 
@@ -20,10 +20,10 @@ router.get('/resource', async (req, res) => {
 		if (resources) {
 			res.status(200).json(resources)
 		} else {
-			res.status(404).json({ message: 'Could not find resources.' })
+			res.status(404).json({ message: 'Failed to find resources.' })
 		}
 	} catch (err) {
-		res.status(500).json({ message: 'Failed to get resources.' })
+		res.status(500).json({ message: 'Error getting resources.' })
 	}
 })
 
@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
 		const projects = await project.addProject(projectData)
 		res.status(201).json(projects)
 	} catch (err) {
-		res.status(500).json({ message: 'Failed to add project.' })
+		res.status(500).json({ message: 'Error adding a project.' })
 	}
 })
 
@@ -48,10 +48,10 @@ router.get('/', async (req, res) => {
 			}
 			res.status(200).json(projects)
 		} else {
-			res.status(404).json({ message: 'Could not find projects.' })
+			res.status(404).json({ message: 'Error finding projects.' })
 		}
 	} catch (err) {
-		res.status(500).json({ message: 'Failed to retrieve projects.' })
+		res.status(500).json({ message: 'Error retreiving projects.' })
 	}
 })
 
@@ -61,7 +61,7 @@ router.post('/tasks', async (req, res) => {
 		const task = await project.addTask(taskData)
 		res.status(201).json(task)
 	} catch (err) {
-		res.status(500).json({ message: 'Failed to add task.' })
+		res.status(500).json({ message: 'Error adding task.' })
 	}
 })
 
@@ -76,10 +76,10 @@ router.get('/tasks', async (req, res) => {
 			}
 			res.status(200).json(tasks)
 		} else {
-			res.status(404).json({ message: 'Could not find tasks.' })
+			res.status(404).json({ message: 'Error finding tasks.' })
 		}
 	} catch (err) {
-		res.status(500).json({ message: 'Failed to retrieve tasks.' })
+		res.status(500).json({ message: 'Error retreiving tasks.' })
 	}
 })
 
@@ -101,10 +101,10 @@ router.get('/full', async (req, res) => {
 			}
 			res.status(200).json(full)
 		} else {
-			res.status(404).json({ message: 'Could not find projects.' })
+			res.status(404).json({ message: 'Error finding projects.' })
 		}
 	} catch (err) {
-		res.status(500).json({ message: 'Failed to retrieve projects.' })
+		res.status(500).json({ message: 'Error retreiving projects.' })
 	}
 })
 
