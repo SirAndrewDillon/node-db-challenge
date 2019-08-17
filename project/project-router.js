@@ -10,7 +10,7 @@ router.post('/resource', async (req, res) => {
 		const resource = await project.addResource(resourceData)
 		res.status(201).json(resource)
 	} catch (err) {
-		res.status(500).json({ message: 'Failed to create a new resource.' })
+		res.status(500).json({ message: 'Error creating a new resource.' })
 	}
 })
 
